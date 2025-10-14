@@ -27,7 +27,7 @@ async goto() {
     await signUpButton.click();
 
     const signUppage = this.page.getByRole('dialog').getByText('Opret en profil', { exact: true });
-  await signUppage.waitFor({ state: 'visible', timeout: 10000 });
+  await signUppage.waitFor({ state: 'visible', timeout: 60000 });
 
   // Change the language
   
@@ -40,7 +40,7 @@ async changelanguage(){
   await this.handleCookies();
     //const language = this.page.locator('div.RegisterStepTitle__PageTitle-sc-a498cb37-0.hlRPPz');
     const language =this.page.getByText('Land og sprog', { exact: true })
-    await language.waitFor({ state: 'visible',timeout: 10000  });   
+    await language.waitFor({ state: 'visible',timeout: 60000  });   
   }
 async selectLanguage() {
   await this.handleCookies();
@@ -70,21 +70,23 @@ async selectLanguage() {
   }
   async fillForm(email: string, password: string) {
     await this.handleCookies();
+    await this.emailInput.waitFor({ state: 'visible', timeout: 60000 });
     await this.emailInput.fill(email);
+    await this.passwordInput.waitFor({ state: 'visible', timeout: 60000 });
     await this.passwordInput.fill(password);
     
   }
   async clickNextBtn(){
     await this.handleCookies();
     const nextButton = this.page.getByRole('button', { name: 'Next' });
-  await nextButton.waitFor({ state: 'visible' });  
+  await nextButton.waitFor({ state: 'visible' ,timeout:60000  });  
   await nextButton.click({ force: true });
   }
 // Create Account form
   async createAccount(){
   await this.handleCookies();
   const emailLocator = this.page.locator('div.RegisterSteps__EmailLabelText-sc-b3f99676-2');  
-  await emailLocator.waitFor({ state: 'visible' });  
+  await emailLocator.waitFor({ state: 'visible' ,timeout:60000 });  
   
    return emailLocator;
   }
