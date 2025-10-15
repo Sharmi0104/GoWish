@@ -128,10 +128,11 @@ async selectLanguage() {
 // Create Account form
   async createAccount(){
   await this.handleCookies();
+  
   const emailLocator = this.page.locator('div.RegisterSteps__EmailLabelText-sc-b3f99676-2');  
   await emailLocator.waitFor({ state: 'visible' ,timeout:60000 });  
   
-   return emailLocator;
+   //return emailLocator;
   }
 
    get firstNameInput() {
