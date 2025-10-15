@@ -135,11 +135,13 @@ async handleCookies() {
   // Click login
   async submit() {
     await this.loginButton.click({ force: true });
+    //await this.loginButton.waitForNavigation({ waitUntil: 'networkidle' });
     await this.handleCookies();
     /*const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
         if (await cookieBanner.isVisible()) {
             await cookieBanner.click();
         }*/
+       
   }
 
   async assertUserName(expectedName: string) {
