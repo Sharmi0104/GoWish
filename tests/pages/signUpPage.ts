@@ -34,21 +34,42 @@ async goto() {
 }
 async changelanguage(){
     await this.handleCookies();
+    const languageDialog = this.page.getByRole('dialog').filter({ hasText: 'Land og sprog' });
+  if (!(await languageDialog.isVisible())) {
     const dkButton = this.page.getByRole('button', { name: 'DK' });
+    await dkButton.waitFor({ state: 'visible' });
+    await dkButton.click();
+    await languageDialog.waitFor({ state: 'visible', timeout: 10000 });
+  }
+ await this.page.locator('.ant-select-selection-item').nth(1).click();
+  await this.page.locator('.ant-select-item-option', { hasText: 'English' }).click();
+  this.page.getByRole('button', { name: 'Gem' }).click();
+  // Select English and save
+  /*const englishOption = this.page.getByRole('option', { name: 'English' });
+  await englishOption.waitFor({ state: 'visible' });
+  await englishOption.click();
+  await this.page.getByRole('button', { name: 'Gem' }).click();*/
+   /* const dkButton = this.page.getByRole('button', { name: 'DK' });
   await dkButton.waitFor({ state: 'visible' });  
   await dkButton.click({ force: true });
   await this.handleCookies();
     //const language = this.page.locator('div.RegisterStepTitle__PageTitle-sc-a498cb37-0.hlRPPz');
-    const language =this.page.getByText('Land og sprog', { exact: true })
-    await language.waitFor({ state: 'visible',timeout: 60000  });   
+     const languageDialog = this.page.getByRole('dialog', { name: /Land og sprog/i });
+  //await expect(languageDialog).toBeVisible({ timeout: 10000 });
+    //const language =this.page.getByText('Land og sprog', { exact: true })
+    await languageDialog.waitFor({ state: 'visible',timeout: 60000  }); 
+    await this.handleCookies();
+    const englishOption = this.page.getByRole('option', { name: 'English' });
+  await englishOption.click();
+  this.page.getByRole('button', { name: 'Gem' }).click();*/
   }
-async selectLanguage() {
+/*async selectLanguage() {
   await this.handleCookies();
   await this.page.locator('.ant-select-selection-item').nth(1).click();
   await this.page.locator('.ant-select-item-option', { hasText: 'English' }).click();
   this.page.getByRole('button', { name: 'Gem' }).click();
   
-}
+}*/
 //Click continue With Email Button
  get continueWithEmailButton() {
     return this.page.getByRole('button', { name: 'Continue with e-mail' });
