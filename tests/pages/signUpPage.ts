@@ -86,6 +86,9 @@ async selectLanguage() {
    const saveButton = this.page.getByRole('button', { name: /gem|save/i });
   await saveButton.waitFor({ state: 'visible' });
   await saveButton.click();
+
+  await this.page.getByRole('dialog', { name: /country & language/i })
+    .waitFor({ state: 'hidden' });
   
 }
 //Click continue With Email Button
