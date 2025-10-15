@@ -4,16 +4,21 @@ readonly page: Page; // now accessible outside
   constructor(page: Page) {
     this.page = page;
   }
-  async handleCookies() {
+ async handleCookies() {
   const cookieBanner = this.page.locator('#cookie-information-template-wrapper');
-  const acceptCookies = this.page.getByRole('button', { name: 'Accepter alle' });
+  const acceptCookies = this.page.getByRole('button', { name: /accepter alle/i });
 
-  if (await acceptCookies.isVisible()) {
-    await acceptCookies.click({ force: true });
+  // Only interact if the banner actually exists
+  if (await cookieBanner.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await acceptCookies.isVisible()) {
+      await acceptCookies.click({ force: true });
+    }
+    // Wait for the banner to disappear fully
+    await cookieBanner.waitFor({ state: 'hidden', timeout: 10000 });
+  } else {
+    // Log that the banner wasn't shown, to confirm behavior
+    console.log('✅ No cookie banner detected');
   }
-
-  // Always wait for detachment to ensure it doesn’t block clicks
-  await cookieBanner.waitFor({ state: 'hidden', timeout: 10000 });
 }
 async goto() {
   await this.page.goto('https://onskeskyen.dk/');
@@ -26,24 +31,28 @@ async goto() {
     await signUpButton.waitFor({ state: 'visible' });   
     await signUpButton.click();
 
+  await this.handleCookies();
     const signUppage = this.page.getByRole('dialog').getByText('Opret en profil', { exact: true });
   await signUppage.waitFor({ state: 'visible', timeout: 60000 });
 
   // Change the language
   
 }
-async changelanguage(){
+/*async changelanguage(){
     await this.handleCookies();
     const languageDialog = this.page.getByRole('dialog').filter({ hasText: 'Land og sprog' });
   if (!(await languageDialog.isVisible())) {
     const dkButton = this.page.getByRole('button', { name: 'DK' });
     await dkButton.waitFor({ state: 'visible' });
+    await this.handleCookies();
+    await this.page.locator('#cookie-information-template-wrapper').waitFor({ state: 'hidden', timeout: 10000 });
+
     await dkButton.click();
     await languageDialog.waitFor({ state: 'visible', timeout: 10000 });
   }
  await this.page.locator('.ant-select-selection-item').nth(1).click();
   await this.page.locator('.ant-select-item-option', { hasText: 'English' }).click();
-  this.page.getByRole('button', { name: 'Gem' }).click();
+  this.page.getByRole('button', { name: 'Gem' }).click();}*/
   // Select English and save
   /*const englishOption = this.page.getByRole('option', { name: 'English' });
   await englishOption.waitFor({ state: 'visible' });
@@ -62,7 +71,7 @@ async changelanguage(){
     const englishOption = this.page.getByRole('option', { name: 'English' });
   await englishOption.click();
   this.page.getByRole('button', { name: 'Gem' }).click();*/
-  }
+  //}
 /*async selectLanguage() {
   await this.handleCookies();
   await this.page.locator('.ant-select-selection-item').nth(1).click();
@@ -72,14 +81,27 @@ async changelanguage(){
 }*/
 //Click continue With Email Button
  get continueWithEmailButton() {
-    return this.page.getByRole('button', { name: 'Continue with e-mail' });
+    //return this.page.getByRole('button', { name: 'Continue with e-mail' });
+    return this.page.getByRole('button', { name: 'Fortsæt med e-mail' });
+
   }
 
   
   async clickContinueWithEmail() {
-    await this.handleCookies();
+   await this.handleCookies();
+   const dismissOverlay = async () => {
+    const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
+    if (await cookieBanner.isVisible()) await cookieBanner.click();
+
+    const modalClose = this.page.locator('button', { hasText: 'Close' }).first();
+    if (await modalClose.isVisible()) await modalClose.click();
+
+    const renewConsent = this.page.locator('button', { hasText: 'renew consent' });
+    if (await renewConsent.isVisible()) await renewConsent.click();
+  };
     await this.continueWithEmailButton.waitFor({ state: 'visible' });
     await this.continueWithEmailButton.click({force: true });
+    await this.handleCookies();
   }
 // Fill email and password
   get emailInput() {
@@ -91,6 +113,16 @@ async changelanguage(){
   }
   async fillForm(email: string, password: string) {
     await this.handleCookies();
+    const dismissOverlay = async () => {
+    const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
+    if (await cookieBanner.isVisible()) await cookieBanner.click();
+
+    const modalClose = this.page.locator('button', { hasText: 'Close' }).first();
+    if (await modalClose.isVisible()) await modalClose.click();
+
+    const renewConsent = this.page.locator('button', { hasText: 'renew consent' });
+    if (await renewConsent.isVisible()) await renewConsent.click();
+  };
     await this.emailInput.waitFor({ state: 'visible', timeout: 60000 });
     await this.emailInput.fill(email);
     await this.passwordInput.waitFor({ state: 'visible', timeout: 60000 });
@@ -99,15 +131,36 @@ async changelanguage(){
   }
   async clickNextBtn(){
     await this.handleCookies();
-    const nextButton = this.page.getByRole('button', { name: 'Next' });
+    const dismissOverlay = async () => {
+    const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
+    if (await cookieBanner.isVisible()) await cookieBanner.click();
+
+    const modalClose = this.page.locator('button', { hasText: 'Close' }).first();
+    if (await modalClose.isVisible()) await modalClose.click();
+
+    const renewConsent = this.page.locator('button', { hasText: 'renew consent' });
+    if (await renewConsent.isVisible()) await renewConsent.click();
+  };
+    const nextButton = this.page.getByRole('button', { name: 'Næste' });
   await nextButton.waitFor({ state: 'visible' ,timeout:60000  });  
   await nextButton.click({ force: true });
   }
 // Create Account form
   async createAccount(){
   await this.handleCookies();
+  const dismissOverlay = async () => {
+    const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
+    if (await cookieBanner.isVisible()) await cookieBanner.click();
+
+    const modalClose = this.page.locator('button', { hasText: 'Close' }).first();
+    if (await modalClose.isVisible()) await modalClose.click();
+
+    const renewConsent = this.page.locator('button', { hasText: 'renew consent' });
+    if (await renewConsent.isVisible()) await renewConsent.click();
+  };
   await this.page.waitForLoadState('networkidle');
-  const emailLocator = this.page.locator('div.RegisterSteps__EmailLabelText-sc-b3f99676-2');  
+  //const emailLocator = this.page.locator('div.RegisterSteps__EmailLabelText-sc-b3f99676-2');  
+  const emailLocator = this.page.getByLabel('Email');
   await emailLocator.waitFor({ state: 'visible' ,timeout:60000 });  
   
    return emailLocator;
