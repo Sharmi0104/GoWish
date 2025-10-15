@@ -25,7 +25,7 @@ export class loginPage {
     );
     this.createUserButton = page.locator("button", { hasText: "Opret bruger" });
   }
-  async handlecokkies() {
+  /*async handleCookies() {
     const dismissOverlay = async () => {
       const cookieBanner = this.page
         .getByRole("button", { name: "Accepter alle" })
@@ -48,8 +48,49 @@ export class loginPage {
       await dismissOverlay();
       await this.page.waitForTimeout(500);
     }
+     
+  }*/
+ 
+///
+async handleCookies() {
+  const buttonNames = [
+    /accepter alle/i,
+    /accept all/i,
+    /allow all/i,
+    /accept/i,
+  ];
+
+  const dismissOverlay = async () => {
+    for (const name of buttonNames) {
+      const button = this.page.getByRole("button", { name }).first();
+      if (await button.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await button.click({ force: true }).catch(() => {});
+      }
+    }
+
+    const modalClose = this.page.locator("button", { hasText: /close|luk/i }).first();
+    if (await modalClose.isVisible().catch(() => false)) await modalClose.click({ force: true }).catch(() => {});
+
+    const renewConsent = this.page.locator("button", { hasText: /renew consent/i }).first();
+    if (await renewConsent.isVisible().catch(() => false)) await renewConsent.click({ force: true }).catch(() => {});
+  };
+
+  for (let i = 0; i < 3; i++) {
+    await dismissOverlay();
+    await this.page.waitForTimeout(1000);
   }
 
+  // Fallback: force remove overlay if still visible
+  await this.page.evaluate(() => {
+    const overlays = ['#cookie-information-template-wrapper', '#coiOverlay'];
+    for (const sel of overlays) {
+      const el = document.querySelector(sel);
+      if (el) el.remove();
+    }
+  });
+}
+
+///
   async goto() {
     await this.page.goto("https://onskeskyen.dk/", {
       waitUntil: "domcontentloaded",
@@ -59,7 +100,7 @@ export class loginPage {
     const loginButton = this.page.locator("button", { hasText: "Log ind" }); // this.page.locator('div.PublicMenu__LoginButtonWrapper-sc-56d3b660-2 button.Button__Container-sc-74e86c1a-0')
     await loginButton.waitFor({ state: "visible", timeout: 15000 });
     await loginButton.click();
-    await this.handlecokkies();
+    await this.handleCookies();
 
     const container = this.page.locator(
       "div.CustomContainer__Container-sc-8ccd59a3-0"
@@ -69,7 +110,7 @@ export class loginPage {
     });
     await continueWithEmail.click();
 
-    await this.handlecokkies();
+    await this.handleCookies();
     const formContainer = this.page.locator("div", {
       hasText: "Fortsæt med e-mail",
     });
@@ -82,19 +123,19 @@ export class loginPage {
   }
   async fillEmail(email: string) {
     await this.emailInput.fill(email);
-    await this.handlecokkies();
+    await this.handleCookies();
   }
 
   // Fill password
   async fillPassword(password: string) {
     await this.passwordInput.fill(password);
-    await this.handlecokkies();
+    await this.handleCookies();
   }
 
   // Click login
   async submit() {
     await this.loginButton.click({ force: true });
-    await this.handlecokkies();
+    await this.handleCookies();
     /*const cookieBanner = this.page.getByRole('button', { name: 'Accepter alle' }).first();
         if (await cookieBanner.isVisible()) {
             await cookieBanner.click();
@@ -103,7 +144,7 @@ export class loginPage {
 
   async assertUserName(expectedName: string) {
     // Dismiss cookie banner if visible
-    await this.handlecokkies();
+    await this.handleCookies();
 
     const userNameLocator = this.page.locator(
       "div.UserHeader__UserActionsContainer-sc-6440e44-5 div.UserHeader__Name-sc-6440e44-2"
