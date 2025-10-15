@@ -106,6 +106,7 @@ async changelanguage(){
 // Create Account form
   async createAccount(){
   await this.handleCookies();
+  await this.page.waitForLoadState('networkidle');
   const emailLocator = this.page.locator('div.RegisterSteps__EmailLabelText-sc-b3f99676-2');  
   await emailLocator.waitFor({ state: 'visible' ,timeout:60000 });  
   
