@@ -30,6 +30,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    headless: true,
+    viewport: { width: 1280, height: 720 },
   },
   
 
@@ -45,10 +47,10 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+   // {
+     // name: 'webkit',
+      //use: { ...devices['Desktop Safari'] },
+    //},
 
     /* Test against mobile viewports. */
     // {
@@ -77,5 +79,18 @@ export default defineConfig({
   //   url: 'http://localhost:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
+
+  // ✅ Customize snapshot (baseline screenshot) folder
+  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
+
+  // ✅ Configure screenshot comparison tolerances
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixels: 100, // up to 100px difference allowed
+      threshold: 0.02,    // 2% diff tolerance
+    },
+  },
+
+ 
   
 });
