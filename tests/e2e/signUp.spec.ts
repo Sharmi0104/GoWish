@@ -11,7 +11,7 @@ test("signup test", async ({ signUp }) => {
   ).toBeVisible();
   await signUp.selectLanguage();
   await signUp.clickContinueWithEmail();
-  await signUp.fillForm("sp74_GoWish@mailinator.com", "Gowish123");
+  await signUp.fillForm("sp79_GoWish@mailinator.com", "Gowish123");
   await signUp.clickNextBtn();
   //const emailLocator = await signUp.createAccount();
   //await expect(emailLocator).toHaveText('sp71_GoWish@mailinator.com');

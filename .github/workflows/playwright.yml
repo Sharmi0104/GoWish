@@ -10,6 +10,11 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        shard: [1/3, 2/3, 3/3] #Run tests in 3 parallel shards
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -41,7 +46,7 @@ jobs:
 
       # RUN TESTS
       - name: Run Playwright tests
-        run: npx playwright test --workers=3   # change workers as needed
+        run: npx playwright test --workers=1   # change workers as needed
 
       # UPLOAD REPORT
       - uses: actions/upload-artifact@v4

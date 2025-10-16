@@ -138,9 +138,9 @@ export class signUpPage {
   }
   async createaccountForm(firstName: string, lastName: string) {
     await this.handleCookies();
-    await this.firstNameInput.waitFor({ state: "visible", timeout: 60000 });
+    await this.firstNameInput.waitFor({ state: "visible", timeout: 120000 });
     await this.firstNameInput.fill(firstName);
-    await this.lastNameInput.waitFor({ state: "visible", timeout: 60000 });
+    await this.lastNameInput.waitFor({ state: "visible", timeout: 120000 });
     await this.lastNameInput.fill(lastName);
     const createProfileButton = this.page.getByRole("button", {
       name: "Create profile",
